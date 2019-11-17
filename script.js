@@ -1,33 +1,41 @@
-window.addEventListener('load', () => {
+window.addEventListener("load", () => {
     let long;
     let lat;
-    let temperatureDescription = document.querySelector(\
-        '.temperature-description'
+    let temperatureDescription = document.querySelector(
+        ".temperature-description"
 );
-    let temperatureDegree = document.querySelector('.temperature-degree');
-    let locationT   imezone = document.querySelector('.location-timezone');
+    let temperatureDegree = document.querySelector(".temperature-degree");
+    let locationTimezone = document.querySelector(".location-timezone");
 
-    
-
-
-
-    if (navegator.geolocation){
-        navegator.geolocation.getCurrentPosition(position => {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(position => {
             long = position.coords.longitude;
             lat = position.coords.latitude;
 
-            const api = 'https://api.darksky.net/forecast/d7f702861e4fc278931d62b1b8efdabf/${lat},${long}';
-            fetch(api)
-    .then(response => {
-        return response.json();
-    })
-    .then(data => {
-        const { temperature, summary } = data.currently;
-        // Set DOM Elements from the API
-        temperatureDegree.textContent
+            const proxy = "https://cors-anywhere.herokuapp.com/";
+            const api = `${proxy}https://api.darksky.net/forecast/d7f702861e4fc278931d62b1b8efdabf/${lat},${long}`;
 
+    fetch(api)
+        .then(response => {
+            return response.json();
+        })
+        .then(data => {
+            console.log(data);
+            const { temperature, summary, icon } = data.currently;
+            // Set DOM Elements from the API
+            temperatureDegree.textContent = temperature;
+            temperatureDescription.textContent = summary;
+            locationTimezone.textContent = data.timezone;
+                //Set Icon
+                setIcons(icon, document.querySelector('.icon'));
+       });
+    });
+  } 
 
-     });
-   });
+  function setIcons(icon, iconID){
+    const skycons = new Skycons({ color: "white" });
+    const currentIcon = icon.replace(/-/g, "_").toUpperCase();
+    skycons.play();
+    return skycons.set(iconID, Skycons[currentIcon]);
   }
 });
